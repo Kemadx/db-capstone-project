@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Menu` (
   `Cuisine` VARCHAR(150) NULL,
   PRIMARY KEY (`MenuID`),
   INDEX `ItemID_FK_idx` (`ItemID` ASC) VISIBLE,
-  CONSTRAINT `ItemID_FK`
+  CONSTRAINT `Menu_ItemID_FK`
     FOREIGN KEY (`ItemID`)
     REFERENCES `LittleLemonDB`.`MenuItems` (`ItemID`)
     ON DELETE CASCADE
@@ -75,15 +75,20 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Bookings` (
   `BookingID` INT NOT NULL,
   `TableNo` INT NOT NULL,
-  `GuestFirstName` VARCHAR(45) NOT NULL,
-  `GuestLastName` VARCHAR(45) NOT NULL,
   `BookingSlot` DATETIME NOT NULL,
   `StaffID` INT NOT NULL,
+  `CustomerID` INT NOT NULL,
   PRIMARY KEY (`BookingID`),
   INDEX `StaffID_FK_idx` (`StaffID` ASC) VISIBLE,
-  CONSTRAINT `StaffID_FK`
+  INDEX `CustomerID_FK_idx` (`CustomerID` ASC) VISIBLE,
+  CONSTRAINT `Bookings_StaffID_FK`
     FOREIGN KEY (`StaffID`)
     REFERENCES `LittleLemonDB`.`Staff` (`StaffID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `Bookings_CustomerID_FK`
+    FOREIGN KEY (`CustomerID`)
+    REFERENCES `LittleLemonDB`.`Customers` (`CustomerID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -94,7 +99,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Orders` (
   `OrderID` INT NOT NULL,
-  `CustomerID` INT NOT NULL,
+  `BookingID` INT NULL,
+  `CustomerID` INT NULL,
   `OrderDate` DATE NOT NULL,
   `MenuID` INT NOT NULL,
   `Quantity` INT NOT NULL,
@@ -102,14 +108,20 @@ CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Orders` (
   PRIMARY KEY (`OrderID`),
   INDEX `MenuID_FK_idx` (`MenuID` ASC) VISIBLE,
   INDEX `CustomerID_FK_idx` (`CustomerID` ASC) VISIBLE,
-  CONSTRAINT `MenuID_FK`
+  INDEX `BookingID_FK_idx` (`BookingID` ASC) VISIBLE,
+  CONSTRAINT `Orders_MenuID_FK`
     FOREIGN KEY (`MenuID`)
     REFERENCES `LittleLemonDB`.`Menu` (`MenuID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `CustomerID_FK`
+  CONSTRAINT `Orders_CustomerID_FK`
     FOREIGN KEY (`CustomerID`)
     REFERENCES `LittleLemonDB`.`Customers` (`CustomerID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `Orders_BookingID_FK`
+    FOREIGN KEY (`BookingID`)
+    REFERENCES `LittleLemonDB`.`Bookings` (`BookingID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -140,12 +152,12 @@ CREATE TABLE IF NOT EXISTS `LittleLemonDB`.`Delivery` (
   PRIMARY KEY (`DeliveryID`),
   INDEX `DeliveryAddressID_FK_idx` (`DeliveryAddress` ASC) VISIBLE,
   INDEX `OrderID_FK_idx` (`OrderID` ASC) VISIBLE,
-  CONSTRAINT `DeliveryAddressID_FK`
+  CONSTRAINT `Delivery_DeliveryAddressID_FK`
     FOREIGN KEY (`DeliveryAddress`)
     REFERENCES `LittleLemonDB`.`DeliveryAddresses` (`DeliveryAddressID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `OrderID_FK`
+  CONSTRAINT `Delivery_OrderID_FK`
     FOREIGN KEY (`OrderID`)
     REFERENCES `LittleLemonDB`.`Orders` (`OrderID`)
     ON DELETE CASCADE
