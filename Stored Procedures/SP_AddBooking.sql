@@ -5,7 +5,8 @@ CREATE PROCEDURE AddBooking (IN b_id INT, IN c_id INT, IN b_date DATE, IN t_no I
 BEGIN
 INSERT INTO bookings VALUES
 (b_id, t_no, b_date, 1, c_id);
-SELECT "New booking added" AS Confirmation;
+### SELECT "New booking added" AS Confirmation;
+### Comment can be removed should you want to inform the customer
 
 END $$
 
